@@ -53,6 +53,22 @@
         "dependsOn": [
           "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
         ]
+      },
+      {
+        "apiVersion": "2015-05-01",
+        "name": "[concat('AppInsights', variables('webAppPortalName'))]",
+        "type": "Microsoft.Insights/components",
+        "location": "[parameters('location')]",
+        "dependsOn": [
+          "[variables('webAppPortalName')]"
+        ],
+        "tags": {
+          "[concat('hidden-link:', resourceId('Microsoft.Web/sites', variables('webAppPortalName')))]": "Resource",
+          "displayName": "AppInsightsComponent"
+        },
+        "properties": {
+          "ApplicationId": "[variables('webAppPortalName')]"
+        }
       }
     ]
   }
