@@ -26,7 +26,7 @@
     },
     "variables": {
       "webAppPortalName": "[concat(parameters('webAppName'), uniqueString(resourceGroup().id))]",
-      "appServicePlanName": "[concat('AppServicePlan-', parameters('webAppName'))]",
+      "appServicePlanName": "[concat('AppServicePlan-', parameters('webAppName'), uniqueString(resourceGroup().id))]",
       "appInsightsName" : "[concat('AppInsights', variables('webAppPortalName'))]"
     },
     "resources": [
