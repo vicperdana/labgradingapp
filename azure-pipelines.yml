@@ -1,3 +1,5 @@
+pool:
+    vmImage: 'vs2017-win2016'
 steps:
 - task: NuGetInstaller@0
   displayName: 'NuGet restore'
