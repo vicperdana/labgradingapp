@@ -9,29 +9,19 @@ steps:
     csmParametersFile: '$(System.DefaultWorkingDirectory)/dropWebApp/dropWebApp/azuredeploy.parameters.json'
     overrideParameters: '-webAppName "labgradinggbac1"'
     deploymentOutputs: webAppUrl
-
-    #Your build pipeline references an undefined variable named ‘webAppUrl’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
-
-steps:
-- powershell: |
+    
+- powershell: 
    # Write your powershell commands here.
-   
    $url = ConvertFrom-Json '$(webAppUrl)'
-   $url.url.value
-   # Use the environment variables input below to pass secret variables to this script.
-  displayName: 'Get Web App URL'
+   echo "##vso[task.setvariable variable=url]$url.url.value"
+  displayName: "Get Azure App URL"
+  name: getUrlStep
 
-
-  variables:
-  url: ''
-
-steps:
 - task: AzureRmWebAppDeployment@3
   displayName: 'Deploy Azure App Service'
   inputs:
     azureSubscription: 'Visual Studio Enterprise(Converted to EA) (6d1eca2e-45dc-4dab-836a-49ee682dd37e)'
     appType: webApp
-    WebAppName: '$(url)'
+    WebAppName: '$(getUrlStep.url)'
     Package: '$(System.DefaultWorkingDirectory)\**\*.zip'
     TakeAppOfflineFlag: true
-
