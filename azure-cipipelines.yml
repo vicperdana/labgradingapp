@@ -1,0 +1,27 @@
+steps:
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Create Azure App Service'
+  inputs:
+    azureSubscription: 'Visual Studio Enterprise(Converted to EA) (6d1eca2e-45dc-4dab-836a-49ee682dd37e)'
+    resourceGroupName: victest01
+    location: 'East US'
+    csmFile: '$(System.DefaultWorkingDirectory)/dropWebApp/dropWebApp/azuredeploy.json'
+    csmParametersFile: '$(System.DefaultWorkingDirectory)/dropWebApp/dropWebApp/azuredeploy.parameters.json'
+    overrideParameters: '-webAppName "labgradinggbac1"'
+    deploymentOutputs: webAppUrl
+    
+- powershell: 
+   # Write your powershell commands here.
+   $url = ConvertFrom-Json '$(webAppUrl)'
+   echo "##vso[task.setvariable variable=url]$url.url.value"
+  displayName: "Get Azure App URL"
+  name: getUrlStep
+
+- task: AzureRmWebAppDeployment@3
+  displayName: 'Deploy Azure App Service'
+  inputs:
+    azureSubscription: 'Visual Studio Enterprise(Converted to EA) (6d1eca2e-45dc-4dab-836a-49ee682dd37e)'
+    appType: webApp
+    WebAppName: '$(getUrlStep.url)'
+    Package: '$(System.DefaultWorkingDirectory)\**\*.zip'
+    TakeAppOfflineFlag: true
